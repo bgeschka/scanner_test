@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<link rel="stylesheet" href="program_data/bootstrap.min.css" />
+	<script charset="utf-8" src="program_data/angular.min.js"></script>
+	<script charset="utf-8" src="program_data/ui-bootstrap-tpls.js"></script>
+	<script charset="utf-8" src="program_data/quagga.min.js"></script>
+	<script charset="utf-8" src="program_data/docxtemplater.v3.9.9.min.js"></script>
+	<script charset="utf-8" src="program_data/nsn.js"></script>
+	<script charset="utf-8" src="program_data/util.js"></script>
+	<script charset="utf-8" src="program_data/app.js"></script>
+	<style>
+		.shritem {
+			color: blue;
+		}
+
+		select,
+		.clickable {
+			cursor: pointer;
+		}
+
+		select:hover,
+		.clickable:hover,
+		.dragable:hover {
+			-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+			border-radius: 5px;
+			-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 139, 255, 0.67);
+			-moz-box-shadow: 0px 0px 5px 0px rgba(0, 139, 255, 0.67);
+			box-shadow: 0px 0px 5px 0px rgba(0, 139, 255, 0.67);
+		}
+
+		#interactive.viewport {
+			position: relative;
+			width: 100%;
+			height: auto;
+			overflow: hidden;
+			text-align: center;
+		}
+
+		#interactive.viewport>canvas,
+		#interactive.viewport>video {
+			max-width: 100%;
+			width: 100%;
+		}
+
+		canvas.drawing,
+		canvas.drawingBuffer {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	</style>
+
+	<title>SHR</title>
+</head>
+
+
+
+<body>
+	<br></br>
+	<div ng-app="WEBUI" ng-controller="main" class="container">
+		<button class="btn btn-primary" ng-click="loadSHR()">Load Sub-Handreceipt</button>
+		<button class="btn btn-primary" ng-click="storeSHR()" ng-if="SHR.loaded">Store Sub-Handreceipt</button>
+
+		<br></br>
+		<uib-tabset active="active_tab" ng-if="SHR.loaded">
+			<uib-tab index="0" heading="List">
+				<shrlist ng-model="SHR.SHR.items"></shrlist>
+			</uib-tab>
+			<uib-tab index="1" heading="Conduct Inventory">
+				<div ng-if="active_tab == 1" ng-controller="inventory" class="row">
+					<div class="col-sm-6">
+						<barscan scanned="didScan" ng-model="barcode"></barscan>
+						<i><b>{{inventory_message}}</b></i>
+					</div>
+					<div class="col-sm-6">
+						<shrlist ng-model="SHR.SHR.items"></shrlist>
+						<h4>Unknown</h4>
+						<shrlist ng-model="SHR.SHR.unknown"></shrlist>
+					</div>
+				</div>
+			</uib-tab>
+			<uib-tab index="2" heading="Print queue">
+				<button ng-click="SHR.createPrint()" class="btn btn-info">Create barcodes</button>
+				<shrlist ng-model="SHR.SHR.barcodequeue"></shrlist>
+			</uib-tab>
+			<uib-tab index="3" heading="RAW-Data">
+				<pre>{{SHR.SHR|json}}</pre>
+			</uib-tab>
+		</uib-tabset>
+
+		<!-- foot -->
+	</div>
+</body>
+
+</html>
