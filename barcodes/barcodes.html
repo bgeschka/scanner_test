@@ -48,7 +48,10 @@
 
 			display: inline-block;
 
-			border: 0.1px solid #bcbcbc;
+			/*border only for testing*/
+			/* 
+				border: 0.1px solid #bcbcbc;
+			*/
 		}
 
 		* {
@@ -67,6 +70,10 @@
 			width: 100%;
     			text-align: center; 
 		}
+
+		.svgbarcode {
+			margin: auto;
+		}
 	</style>
 
 	<script charset="utf-8">
@@ -82,19 +89,25 @@
 		function makebarcode(svgid, value) {
 			var container = document.getElementById("content_"+svgid);
 			var input = document.getElementById("input_"+svgid);
+			var svg = document.getElementById(svgid);
 			if(value) {
   				container.classList.remove("no-print");
   				input.classList.remove("no-print");
+				svg.style.display="block";
 			} else {
   				container.classList.add("no-print");
   				input.classList.add("no-print");
+				svg.style.display="none";
+				return
 			}
-			if(event.key !== 'Enter') return
+			// if(event.key !== 'Enter') return
+
 			console.log("render barcode", value);
 			JsBarcode("#"+svgid, value, {
+				displayValue: false,
 				width: 1,
-				text: "",
   				fontSize: 0,
+  				margin: 5,
   				height:30 
 			});
 
@@ -116,8 +129,8 @@
 					if(a != 0) table += '<td class="separator"/>'
 
 					var id = 'barcode_' + ids++;
-					var inner = '<td class="stickercontent no-print" id="content_'+id+'"><svg id="'+id+'" class="barcode" style="display:none"/>'
-					inner += '<input placeholder="barcode value" id="input_'+id+'" class="no-print bcinput" maxlength="15" onkeydown="makebarcode(\''+id+'\',this.value)"></input></td>'
+					var inner = '<td class="stickercontent no-print" id="content_'+id+'"><svg id="'+id+'" class="svgbarcode barcode" style="display:none"/>'
+					inner += '<input placeholder="barcode value" id="input_'+id+'" class="no-print bcinput" maxlength="15" oninput="makebarcode(\''+id+'\',this.value)"></input></td>'
 					table += inner;
 				}
 				table += "</tr>"
