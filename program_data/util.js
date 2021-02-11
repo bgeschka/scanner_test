@@ -1,5 +1,6 @@
 var Util = {
 	play_audio: function(path) {
+		if(!path) return;
 		var audio = new Audio(path);
 		if(audio) audio.play();
 	},

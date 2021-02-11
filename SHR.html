@@ -64,6 +64,7 @@
 <body>
 	<br></br>
 	<div ng-app="WEBUI" ng-controller="main" class="container">
+		<button class="btn btn-primary" ng-click="newSHR()">New Sub-Handreceipt</button>
 		<button class="btn btn-primary" ng-click="loadSHR()">Load Sub-Handreceipt</button>
 		<button class="btn btn-primary" ng-click="storeSHR()" ng-if="SHR.loaded">Store Sub-Handreceipt</button>
 
@@ -85,11 +86,7 @@
 					</div>
 				</div>
 			</uib-tab>
-			<uib-tab index="2" heading="Print queue">
-				<button ng-click="SHR.createPrint()" class="btn btn-info">Create barcodes</button>
-				<shrlist ng-model="SHR.SHR.barcodequeue"></shrlist>
-			</uib-tab>
-			<uib-tab index="3" heading="RAW-Data">
+			<uib-tab index="2" heading="RAW-Data">
 				<pre>{{SHR.SHR|json}}</pre>
 			</uib-tab>
 		</uib-tabset>

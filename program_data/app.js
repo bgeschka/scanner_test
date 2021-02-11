@@ -19,12 +19,23 @@ app.directive('autofocus', ['$timeout', function($timeout, ImmoPlusService) {
 }]);
 
 app.service("SHR", function($uibModal) {
-	this.SHR = {};
+	this.initSHR = function() {
+		this.SHR = {
+			items : []
+		};
+		this.loaded = true;
+	}
+	this.initSHR();
+
 	var self = this;
 	this.storeSHR = function() {
 		Util.doAlert("Storing new Sub-Handreceipt");
 		Util.makeDownload("SHR-" + Util.getDateString() + ".json", angular.toJson(self.SHR));
 	};
+
+	this.newSHR = function() {
+		this.initSHR();
+	}
 
 	this.loadSHR = function(cb) {
 		Util.loadfile(function(data) {
@@ -33,6 +44,7 @@ app.service("SHR", function($uibModal) {
 			} catch (e) {
 				Util.error("failed to parse");
 			}
+			if(!self.SHR.items) self.SHR.items = [];
 			self.loaded = true;
 			if (cb) cb();
 		}, ".json");
@@ -101,11 +113,6 @@ app.service("SHR", function($uibModal) {
 	this.addCommentPrompted = function(entry) {
 		var msg = prompt("why?");
 		this.addComment(entry, msg);
-	}
-	this.queueForBarCodePrint = function(entry) {
-		if(!this.SHR.barcodequeue) this.SHR.barcodequeue = [];
-		if(this.SHR.barcodequeue.indexOf(entry) !== -1) return;
-		this.SHR.barcodequeue.push(entry);
 	}
 
 	this.moveKnownToUnknown= function(entry) {
@@ -207,7 +214,7 @@ app.directive('barscan', [function() {
 		controller: function($scope) {
 			$scope.manual_enter = '';
 			$scope.found = function(code) {
-				util.play('program_data/code_detect.mp3');
+				Util.play_audio('program_data/code_detect.mp3');
 				console.log("barscan - detected code:", code);
 				$scope.ngModel = code;
 				if (!Util.isFunction($scope.scanned)) {
@@ -351,7 +358,6 @@ app.directive('shrlist', [function() {
 			' 			<td>'+
 			' 				<span ng-click="SHR.moveUnknownToKnown(item)" uib-tooltip="joined my section" class="clickable glyphicon glyphicon-ok" aria-hidden="true"></span>' +
 			' 				<span ng-click="SHR.moveKnownToUnknown(item)" uib-tooltip="left my section" class="clickable glyphicon glyphicon-remove" aria-hidden="true"></span>' +
-			' 				<span ng-click="SHR.queueForBarCodePrint(item)" uib-tooltip="queue for barcode print" class="clickable glyphicon glyphicon-barcode" aria-hidden="true"></span>' +
 			' 			</td>' +
 			' 		</tr>' +
 			' 	</tbody>' +
@@ -438,4 +444,5 @@ app.controller('main', function($scope, SHR) {
 		});
 	}
 	$scope.storeSHR = SHR.storeSHR;
+	$scope.newSHR = SHR.newSHR;
 });
